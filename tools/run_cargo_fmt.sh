@@ -9,8 +9,9 @@ if [ ! -x tools/run_cargo_fmt.sh ]; then
 	exit 1
 fi
 
-# Install formatting tools if needed. Source this script so it can modify PATH
-source tools/install_cargo_fmt.sh
+if ! rustup component list | grep 'rustfmt-preview.*(installed)' -q; then
+	rustup component add rustfmt-preview
+fi
 
 # Format overwrites changes, which is probably good, but it's nice to see
 # what it has done
@@ -44,14 +45,14 @@ if [ "$1" == "diff" ]; then
 	# Just print out diffs and count errors, used by Travis
 	for f in $(find . | grep Cargo.toml); do
 		pushd $(dirname $f) > /dev/null
-		cargo-fmt -- --write-mode=check || let FAIL=FAIL+1
+		cargo-fmt -- --check || let FAIL=FAIL+1
 		popd > /dev/null
 	done
 	exit $FAIL
 else
 	for f in $(find . | grep Cargo.toml); do
 		pushd $(dirname $f) > /dev/null
-		cargo-fmt -- --write-mode=overwrite || let FAIL=FAIL+1
+		cargo-fmt || let FAIL=FAIL+1
 		popd > /dev/null
 	done
 
