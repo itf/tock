@@ -1,7 +1,5 @@
 [package]
-name = "kernel"
+name = "tock-cells"
 version = "0.1.0"
 authors = ["Tock Project Developers <tock-dev@googlegroups.com>"]
 
-[dependencies]
-tock-cells = { path = "../libraries/tock-cells" }

@@ -11,6 +11,8 @@
 #![feature(nonnull_cast)]
 #![no_std]
 
+extern crate tock_cells;
+
 #[macro_use]
 pub mod common;
 #[macro_use]
