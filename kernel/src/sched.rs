@@ -5,6 +5,7 @@ use core::ptr::NonNull;
 
 use callback;
 use callback::{AppId, Callback};
+use capabilities;
 use ipc;
 use mem::AppSlice;
 use memop;
@@ -27,6 +28,7 @@ pub fn kernel_loop<P: Platform, C: Chip>(
     chip: &mut C,
     processes: &'static mut [Option<&mut process::Process<'static>>],
     ipc: Option<&ipc::IPC>,
+    _capability: &capabilities::MainLoopCapability,
 ) {
     let processes = unsafe {
         process::PROCS = processes;
