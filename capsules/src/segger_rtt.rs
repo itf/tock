@@ -99,7 +99,7 @@ pub struct SeggerRtt<'a, A: hil::time::Alarm + 'a> {
     alarm: &'a A, // Dummy alarm so we can get a callback.
     config: TakeCell<'static, SeggerRttMemory>,
     up_buffer: TakeCell<'static, [u8]>,
-    down_buffer: TakeCell<'static, [u8]>,
+    _down_buffer: TakeCell<'static, [u8]>,
     client: OptionalCell<&'static hil::uart::Client>,
     client_buffer: TakeCell<'static, [u8]>,
 }
@@ -115,7 +115,7 @@ impl<'a, A: hil::time::Alarm + 'a> SeggerRtt<'a, A> {
             alarm: alarm,
             config: TakeCell::new(config),
             up_buffer: TakeCell::new(up_buffer),
-            down_buffer: TakeCell::new(down_buffer),
+            _down_buffer: TakeCell::new(down_buffer),
             client: OptionalCell::empty(),
             client_buffer: TakeCell::empty(),
         }
@@ -127,7 +127,7 @@ impl<'a, A: hil::time::Alarm + 'a> hil::uart::UART for SeggerRtt<'a, A> {
         self.client.set(client);
     }
 
-    fn init(&self, params: hil::uart::UARTParams) {}
+    fn init(&self, _params: hil::uart::UARTParams) {}
 
     fn transmit(&self, tx_data: &'static mut [u8], tx_len: usize) {
         self.up_buffer.map(|buffer| {
@@ -157,7 +157,7 @@ impl<'a, A: hil::time::Alarm + 'a> hil::uart::UART for SeggerRtt<'a, A> {
         self.alarm.set_alarm(tics);
     }
 
-    fn receive(&self, rx_buf: &'static mut [u8], rx_len: usize) {}
+    fn receive(&self, _rx_buf: &'static mut [u8], _rx_len: usize) {}
 
     fn abort_receive(&self) {}
 }
