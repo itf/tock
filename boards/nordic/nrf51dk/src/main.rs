@@ -49,13 +49,14 @@
 
 extern crate capsules;
 #[allow(unused_imports)]
-#[macro_use(debug, debug_verbose, debug_gpio, static_init)]
+#[macro_use(debug, debug_verbose, debug_gpio, static_init, create_capability)]
 extern crate kernel;
 extern crate nrf51;
 extern crate nrf5x;
 
 use capsules::alarm::AlarmDriver;
 use capsules::virtual_alarm::{MuxAlarm, VirtualMuxAlarm};
+use kernel::capabilities;
 use kernel::hil::uart::UART;
 use kernel::{Chip, SysTick};
 use nrf5x::pinmux::Pinmux;
@@ -133,6 +134,12 @@ pub unsafe fn reset_handler() {
     // Loads relocations and clears BSS
     nrf51::init();
 
+    // Create capabilities that the board needs to call certain protected kernel
+    // functions.
+    let process_mgmt_cap = create_capability!(capabilities::ProcessManagementCapability);
+    let main_cap = create_capability!(capabilities::MainLoopCapability);
+    let grant_cap = create_capability!(capabilities::MemoryAllocationCapability);
+
     // LEDs
     let led_pins = static_init!(
         [(&'static nrf5x::gpio::GPIOPin, capsules::led::ActivationMode); 4],
@@ -183,7 +190,7 @@ pub unsafe fn reset_handler() {
     );
     let button = static_init!(
         capsules::button::Button<'static, nrf5x::gpio::GPIOPin>,
-        capsules::button::Button::new(button_pins, kernel::Grant::create())
+        capsules::button::Button::new(button_pins, kernel::Grant::create(&grant_cap))
     );
     for &(btn, _) in button_pins.iter() {
         use kernel::hil::gpio::PinCtl;
@@ -236,7 +243,7 @@ pub unsafe fn reset_handler() {
             115200,
             &mut capsules::console::WRITE_BUF,
             &mut capsules::console::READ_BUF,
-            kernel::Grant::create()
+            kernel::Grant::create(&grant_cap)
         )
     );
     UART::set_client(&nrf51::uart::UART0, console);
@@ -257,7 +264,7 @@ pub unsafe fn reset_handler() {
     );
     let alarm = static_init!(
         AlarmDriver<'static, VirtualMuxAlarm<'static, Rtc>>,
-        AlarmDriver::new(virtual_alarm1, kernel::Grant::create())
+        AlarmDriver::new(virtual_alarm1, kernel::Grant::create(&grant_cap))
     );
     virtual_alarm1.set_client(alarm);
 
@@ -270,14 +277,14 @@ pub unsafe fn reset_handler() {
         capsules::temperature::TemperatureSensor<'static>,
         capsules::temperature::TemperatureSensor::new(
             &mut nrf5x::temperature::TEMP,
-            kernel::Grant::create()
+            kernel::Grant::create(&grant_cap)
         )
     );
     kernel::hil::sensors::TemperatureDriver::set_client(&nrf5x::temperature::TEMP, temp);
 
     let rng = static_init!(
         capsules::rng::SimpleRng<'static, nrf5x::trng::Trng>,
-        capsules::rng::SimpleRng::new(&mut nrf5x::trng::TRNG, kernel::Grant::create())
+        capsules::rng::SimpleRng::new(&mut nrf5x::trng::TRNG, kernel::Grant::create(&grant_cap))
     );
     nrf5x::trng::TRNG.set_client(rng);
 
@@ -289,7 +296,7 @@ pub unsafe fn reset_handler() {
         >,
         capsules::ble_advertising_driver::BLE::new(
             &mut nrf51::radio::RADIO,
-            kernel::Grant::create(),
+            kernel::Grant::create(&grant_cap),
             &mut capsules::ble_advertising_driver::BUF,
             ble_radio_virtual_alarm
         )
@@ -343,12 +350,14 @@ pub unsafe fn reset_handler() {
         &mut APP_MEMORY,
         &mut PROCESSES,
         FAULT_RESPONSE,
+        &process_mgmt_cap,
     );
 
     kernel::kernel_loop(
         &platform,
         &mut chip,
         &mut PROCESSES,
-        Some(&kernel::ipc::IPC::new()),
+        Some(&kernel::ipc::IPC::new(&grant_cap)),
+        &main_cap,
     );
 }
