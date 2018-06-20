@@ -53,8 +53,8 @@ pub struct SeggerRttMemory {
 
 #[repr(C)]
 pub struct SeggerRttBuffer {
-    name: *const (), // Pointer to the name of this channel. Must be a 4 byte thin pointer.
-    buffer: *const (), // Pointer to the buffer for this channel.
+    name: *const u8, // Pointer to the name of this channel. Must be a 4 byte thin pointer.
+    buffer: *const u8, // Pointer to the buffer for this channel.
     length: u32,
     write_position: u32,
     read_position: u32,
@@ -76,16 +76,16 @@ impl SeggerRttMemory {
             number_up_buffers: 1,
             number_down_buffers: 1,
             up_buffer: SeggerRttBuffer {
-                name: up_buffer_name as *const [u8] as *const (),
-                buffer: up_buffer as *const [u8] as *const (),
+                name: up_buffer_name.as_ptr(),
+                buffer: up_buffer.as_ptr(),
                 length: 1024,
                 write_position: 0,
                 read_position: 0,
                 flags: 0,
             },
             down_buffer: SeggerRttBuffer {
-                name: down_buffer_name as *const [u8] as *const (),
-                buffer: down_buffer as *const [u8] as *const (),
+                name: down_buffer_name.as_ptr(),
+                buffer: down_buffer.as_ptr(),
                 length: 32,
                 write_position: 0,
                 read_position: 0,
