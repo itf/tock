@@ -8,7 +8,11 @@ extern crate kernel;
 
 pub mod test;
 
+#[macro_use]
+pub mod net;
+
 pub mod adc;
+pub mod aes_ccm;
 pub mod alarm;
 pub mod ambient_light;
 pub mod app_flash_driver;
@@ -21,7 +25,9 @@ pub mod fm25cl;
 pub mod fxos8700cq;
 pub mod gpio;
 pub mod gpio_async;
+pub mod humidity;
 pub mod i2c_master_slave_driver;
+pub mod ieee802154;
 pub mod isl29035;
 pub mod led;
 pub mod lps25hb;
@@ -39,6 +45,7 @@ pub mod rng;
 pub mod sdcard;
 pub mod si7021;
 pub mod spi;
+pub mod temperature;
 pub mod tmp006;
 pub mod tsl2561;
 pub mod usb;
@@ -48,9 +55,3 @@ pub mod virtual_alarm;
 pub mod virtual_flash;
 pub mod virtual_i2c;
 pub mod virtual_spi;
-#[macro_use]
-pub mod net;
-pub mod aes_ccm;
-pub mod humidity;
-pub mod ieee802154;
-pub mod temperature;
