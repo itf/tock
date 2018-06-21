@@ -4,11 +4,22 @@
 //! * Philip Levis <pal@cs.stanford.edu>
 //! * Date: August 18, 2016
 
+<<<<<<< HEAD
 use core::cell::Cell;
 use core::ops::{Index, IndexMut};
 use kernel::common::regs::{FieldValue, ReadWrite};
 use kernel::common::StaticRef;
 use kernel::hil;
+=======
+use core::{
+    cell::Cell,
+    ops::{Index, IndexMut},
+};
+use kernel::{
+    common::regs::{FieldValue, ReadWrite},
+    hil,
+};
+>>>>>>> rustfmt 0.8.2
 
 #[cfg(feature = "nrf51")]
 const NUM_GPIOTE: usize = 4;

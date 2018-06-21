@@ -8,7 +8,11 @@
 
 #![feature(asm, core_intrinsics, unique, nonzero, ptr_internals)]
 #![feature(const_fn, const_cell_new, const_unsafe_cell_new, lang_items)]
+<<<<<<< HEAD
 #![feature(nonnull_cast, use_extern_macros, try_from)]
+=======
+#![feature(nonnull_cast, try_from)]
+>>>>>>> rustfmt 0.8.2
 #![no_std]
 
 extern crate tock_regs;
