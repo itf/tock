@@ -5,13 +5,12 @@ MAKEFLAGS += -R
 
 MAKEFILE_COMMON_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-TOOLCHAIN ?= arm-none-eabi
+TOOLCHAIN ?= llvm
 
 CARGO ?= cargo
 # This will hopefully move into Cargo.toml (or Cargo.toml.local) eventually
 RUSTFLAGS_FOR_CARGO_LINKING := "-C link-arg=-nostartfiles -C link-arg=-Tlayout.ld"
 
-CC        := $(TOOLCHAIN)-gcc
 SIZE      ?= $(TOOLCHAIN)-size
 OBJCOPY   ?= $(TOOLCHAIN)-objcopy
 OBJDUMP   ?= $(TOOLCHAIN)-objdump
