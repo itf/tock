@@ -146,7 +146,7 @@ void _start(void* text_start, void* mem_start, void* memory_len, void* app_heap_
 
 ## Stack and Heap
 
-Applications can memory requirements by setting the `minimum_ram_size` variable
+Applications can set memory requirements by setting the `minimum_ram_size` variable
 in their TBF headers. Note that the Tock kernel treats this as a minimum,
 depending on the underlying platform, the amount of memory may be larger than
 requested, but will never be smaller.
